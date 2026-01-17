@@ -1,0 +1,13 @@
+name: Email Verification Action
+
+on: 
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # This allows you to trigger it manually
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 23f1002880@ds.study.iitm.ac.in
+        run: echo "Action triggered for IITM verification"
