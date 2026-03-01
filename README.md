@@ -1,4 +1,4 @@
-![CI](https://github.com/Poojita04/Ds_iitm/actions/workflows/ci.yml)
+![CI](https://github.com/Poojita04/Ds_iitm/actions/workflows/ci.yml/badge.svg)
 # My Project
 
 Simple project with automated CI workflow.
