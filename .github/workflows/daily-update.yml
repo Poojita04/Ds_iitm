@@ -2,33 +2,36 @@ name: Daily Update by Poojita
 
 on:
   schedule:
-    # Runs daily at 2:30 AM UTC (specific time: minute 30, hour 2, any day/month/day-of-week)
-    # Pick any specific hour/minute combo; this = once per day, not wildcards like *
+    # Runs daily at 2:30 AM UTC (specific minute/hour as required)
     - cron: '30 2 * * *'
-  # Lets you test manually without waiting 24h
   workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      # Step with your exact email in the name (required)
+      # REQUIRED: Your exact email in step name
       - name: Poojita Mukundan (23f1002880@ds.study.iitm.ac.in) - Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      # Create a small change: update a status file with today's date
+      # FIXED VERSION - GUARANTEED commit every time
       - name: Add daily update
         run: |
-          echo "# Daily automated update on $(date -u '+%Y-%m-%d %H:%M UTC')" > STATUS.md
+          # Always unique with seconds + counter
+          COUNTER_FILE="update-counter.txt"
+          COUNTER=$(cat $COUNTER_FILE 2>/dev/null || echo "0")
+          NEW_COUNTER=$((COUNTER + 1))
+          echo $NEW_COUNTER > $COUNTER_FILE
+          
+          echo "# Daily Update #${NEW_COUNTER}" > STATUS.md
+          echo "Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> STATUS.md
+          
           git config user.name "Daily Bot"
           git config user.email "23f1002880@ds.study.iitm.ac.in"
-          git add STATUS.md
-          git commit -m "Daily update: $(date -u '+%Y-%m-%d %H:%M UTC')" || echo "No changes"
-
-      # Push the commit back (uses the token for permissions)
-      - name: Push changes
-        run: |
+          
+          git add STATUS.md $COUNTER_FILE
+          git commit -m "Daily update #${NEW_COUNTER}: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" --allow-empty
           git push
-
